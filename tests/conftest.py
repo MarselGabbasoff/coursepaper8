@@ -41,7 +41,6 @@ async def authenticated_user() -> str:
     Создает пользователя и выполняет вход в систему, возвращает токен авторизации.
     """
     username = "test_user"
-    password = "test_password"
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         await ac.post("/register", json={"username": username, "password": password})

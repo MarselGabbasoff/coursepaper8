@@ -8,7 +8,6 @@ from app.core.config import DATABASE_NAME, MONGODB_URI, SALT
 from app.core.dependencies import create_secret_service_and_repository, create_user_service_and_repository
 from app.exceptions import jwt_decode_error_handler
 from app.models.secret import PassphraseRequest, SecretKeyResponse, SecretRequest, SecretResponse
-from app.models.user import UserRequest
 
 
 @asynccontextmanager
@@ -41,8 +40,6 @@ app = FastAPI(lifespan=lifespan, title="One Time Secret API")
 app.add_exception_handler(JWTDecodeError, jwt_decode_error_handler)
 
 
-@app.post("/register", tags=["Authentication"])
-async def register_user(request: UserRequest) -> dict:
     """
     Регистрация нового пользователя.
 
@@ -52,11 +49,8 @@ async def register_user(request: UserRequest) -> dict:
     :return: Ответ с сообщением об успешной регистрации.
     """
     await app.state.user_service.register_user(request.username, request.password)
-    return {"message": "User registered successfully"}
 
 
-@app.post("/login", tags=["Authentication"])
-async def login_user(request: UserRequest) -> dict:
     """
     Аутентификация пользователя.
 
@@ -66,7 +60,6 @@ async def login_user(request: UserRequest) -> dict:
     :return: Ответ с токеном доступа.
     """
     token = await app.state.user_service.authenticate_user(request.username, request.password)
-    return {"access_token": token}
 
 
 @app.post("/generate", response_model=SecretKeyResponse, tags=["Secrets"])
